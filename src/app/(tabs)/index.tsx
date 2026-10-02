@@ -1,26 +1,33 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Link } from 'expo-router'; // <-- Importação do Link
-import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Link, useRouter } from 'expo-router';
+import { Image, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { TeamCarousel } from '@/components/team-carousel';
 
 export default function HomeScreen() {
+    const router = useRouter();
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-            <ScrollView contentContainerStyle={styles.scroll}>
+            <ScrollView
+                contentContainerStyle={[
+                    styles.scroll,
+                    Platform.OS === 'web' && styles.webScroll,
+                ]}>
                 
-                {/* Cabeçalho com Logo e Botão de Utilizador/Login */}
+                {/* Cabeçalho com logo e acesso ao contato */}
                 <View style={styles.header}>
                     <Image 
                         source={require('../../images.png')} 
                         style={styles.logo}
                         resizeMode="contain"
                     />
-                    {/* Navegação garantida com Link */}
-                    <Link href="/auth" asChild>
-                        <TouchableOpacity style={styles.botaoUsuario}>
-                            <Text style={styles.textoBotaoUsuario}>👤 Entrar / Conta</Text>
-                        </TouchableOpacity>
-                    </Link>
+                    <TouchableOpacity
+                        accessibilityRole="button"
+                        onPress={() => router.push('/contact')}
+                        style={styles.botaoUsuario}>
+                        <Text style={styles.textoBotaoUsuario}>Contato</Text>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Hero / Apresentação e Valores */}
@@ -55,31 +62,7 @@ export default function HomeScreen() {
                     </View>
                 </View>
 
-                {/* Secção de Equipa / Funcionários */}
-                <Text style={styles.secaoTitulo}>Nossa Equipa</Text>
-                <Text style={styles.secaoSub}>Conheça os profissionais por trás do sucesso da Alltak.</Text>
-                
-                <View style={styles.gridEquipa}>
-                    <TouchableOpacity style={styles.cardFuncionario} onPress={() => alert('Detalhes sobre o colaborador em breve!')}>
-                        <View style={styles.avatarPlaceholder}>
-                            <Text style={styles.avatarText}>LS</Text>
-                        </View>
-                        <View>
-                            <Text style={styles.nomeFuncionario}>Lucas Souza</Text>
-                            <Text style={styles.cargoFuncionario}>Desenvolvedor & Engenharia</Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.cardFuncionario} onPress={() => alert('Detalhes sobre o colaborador em breve!')}>
-                        <View style={styles.avatarPlaceholder}>
-                            <Text style={styles.avatarText}>AT</Text>
-                        </View>
-                        <View>
-                            <Text style={styles.nomeFuncionario}>Equipa Técnica Alltak</Text>
-                            <Text style={styles.cargoFuncionario}>Suporte e Qualidade</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                <TeamCarousel />
 
                 {/* Botão de Ação Final com Link */}
                 <View style={styles.ctaContainer}>
@@ -110,6 +93,9 @@ const styles = StyleSheet.create({
     scroll: {
         padding: 20,
         flexGrow: 1,
+    },
+    webScroll: {
+        paddingTop: 100,
     },
     header: {
         flexDirection: 'row',
